@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FormProcessor;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +19,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/userform', function () {
+    return view('userform'); // Убедитесь, что представление называется userform.blade.php
+});
+
+// Добавляем новый маршрут для FormProcessor
+// Route::post('/userform', [FormProcessor::class, 'index']);
+Route::post('/store_form', [FormProcessor::class, 'store']);
