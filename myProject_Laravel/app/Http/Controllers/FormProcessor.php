@@ -15,7 +15,10 @@ class FormProcessor extends Controller
             'email' => 'required|email|max:255',
         ]);
 
-        // Перенаправление на страницу приветствия с именем
-        return view('greeting', ['first_name' => $validatedData['first_name']]);
+        return view('greeting', [
+            'first_name' => $validatedData['first_name'],
+            'last_name' => $validatedData['last_name'],
+            'email' => $validatedData['email'],
+        ]);
     }
 }
