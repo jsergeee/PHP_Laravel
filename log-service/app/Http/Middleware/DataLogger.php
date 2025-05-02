@@ -10,21 +10,16 @@ class DataLogger
 {
     private $start_time;
 
-    /**
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response | \Illuminate\Http\RedirectResponse) $next
-     * @return \Illuminate\Http\Response || \Illuminate\Http\RedirectResponse
-     */
-
     public function handle($request, Closure $next)
     {
+        \Log::info('DataLogger handle вызван');
         $this->start_time = microtime(true);
         return $next($request);
     }
 
     public function terminate($request, $response)
     {
+        \Log::info('DataLogger terminate вызван');
         if (env('API_DATALOGGER', true)) {
             if (env('API_DATALOGGER_USE_DATABASE', true)) {
                 $endTime = microtime(true);
@@ -36,21 +31,19 @@ class DataLogger
                 $log->method = $request->method();
                 $log->input = $request->getContent();
                 $log->save();
-            } 
-            else{}
-    
-        }
-        else
-        {
-            $filename = microtime(true);
-            $endTime = microtime(true); // Инициализация переменной $endTime
-            $dataLog = "Time: " . date('Y-m-d H:i:s') . "\n";
-            $dataLog .= "Duration: " . number_format($endTime - $this->start_time, 3) . " ms\n";
-            $dataLog .= "IP: " . $request->ip() . "\n";
-            $dataLog .= "URL: " . $request->fullUrl() . "\n";
-            $dataLog .= "Method: " . $request->method() . "\n";
-            $dataLog .= "Input: " . $request->getContent() . "\n";
-            file_put_contents(storage_path('logs') . DIRECTORY_SEPARATOR . $filename, $dataLog);
+            } else {
+                // Логирование в файл
+                $filename = microtime(true) . '.log';
+                $endTime = microtime(true);
+                $dataLog = "Time: " . date('Y-m-d H:i:s') . "\n";
+                $dataLog .= "Duration: " . number_format($endTime - $this->start_time, 3) . " seconds\n";
+                $dataLog .= "IP: " . $request->ip() . "\n";
+                $dataLog .= "URL: " . $request->fullUrl() . "\n";
+                $dataLog .= "Method: " . $request->method() . "\n";
+                $dataLog .= "Input: " . $request->getContent() . "\n";
+
+                file_put_contents(storage_path('logs') . DIRECTORY_SEPARATOR . $filename, $dataLog);
+            }
         }
     }
 }
