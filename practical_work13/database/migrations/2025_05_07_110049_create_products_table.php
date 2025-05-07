@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('sku');
+            $table->string('name');
+            $table->decimal('price', 9, 3);
+            $table->timestamps(); // Laravel автоматически добавит поля created_at и updated_at
         });
-    }
+    } // <-- Вот здесь не хватало закрывающей скобки для up()
 
     /**
      * Reverse the migrations.
